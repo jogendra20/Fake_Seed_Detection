@@ -1,0 +1,23 @@
+<div class="v15-dashboard">
+    <style>
+        .meter { width: 100%; height: 20px; background: #eee; border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .progress { height: 100%; width: 0%; transition: 0.5s; background: #2196F3; }
+    </style>
+    <h2>Forensic Seed Analyzer v15</h2>
+    <input type="file" id="inp" onchange="analyze()">
+    <div class="meter"><div id="bar" class="progress"></div></div>
+    <h3 id="verdict">Awaiting Sample...</h3>
+</div>
+
+<script>
+async function analyze() {
+    const fd = new FormData();
+    fd.append('file', document.getElementById('inp').files[0]);
+    const res = await fetch('/predict', { method: 'POST', body: fd });
+    const data = await res.json();
+    
+    document.getElementById('bar').style.width = (data.probability * 100) + "%";
+    document.getElementById('verdict').innerText = data.verdict;
+    document.getElementById('bar').style.background = data.probability > 0.5 ? "#f44336" : "#4CAF50";
+}
+</script>
